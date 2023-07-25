@@ -1,38 +1,44 @@
-from flask import Blueprint, render_template, request, redirect
-from pos.models.transactions import Transactions
-from pos.models.transactions_products import TransactionProducts
-from pos.models import db
+from flask import Blueprint, render_template, request, redirect, url_for
+from flask_login import login_required
+from datetime import datetime, timedelta
+from pos.models import db, Transaction, Service
 
-bp = Blueprint("transactions",__name__)
+bp = Blueprint("transactions", __name__, url_prefix='/transactions')
 
-@bp.route("/transactions")
-def transactions_list():
-	transactions = Transactions.query.all()
-	return render_template("transactions/list.html",transactions=transactions)
+@bp.route("/")
+@login_required
+def list():
+    transactions = Transaction.query.all()
+    return render_template("transactions/list.html", transactions=transactions, now=datetime.now())
 
-@bp.route("/transactions/add", methods=["GET","POST"])
-def transactions_add():
-	if request.method == "POST":
-		# ambil data dari form html
-		products = request.form.getlist("products")
-		products_qty = request.form.getlist("products_qty")
+@bp.route("/add", methods=["GET","POST"])
+@login_required
+def add():
+    if request.method == "GET":
+        return render_template("transactions/form_add.html")
+    # ambil data dari form html
+    service_name = request.form["service"]
+    duration = request.form["duration"]
+    amount = request.form["amount"]
+    # buat transacsi utamanya
+    transaction = Transaction()
+    service = Service.query.filter_by(name=service_name).one()
+    transaction.service_id = service.id
+    transaction.service_duration = duration
+    transaction.amount = amount
+    db.session.add(transaction)
+    db.session.flush()
+    # commit semua transaksi
+    db.session.commit()
+    return redirect(url_for("transactions.list"))
 
-		# buat transacsi utamanya
-		transactions = Transactions()
-		db.session.add(transactions)
-		# flush terlebih dahulu untuk mencegah transaksi apabila gagal
-		db.session.flush()
-
-		# loop product
-		for i, product in enumerate(products):
-			transactions_products = TransactionProducts()
-			transactions_products.transaction_id = transactions.id
-			transactions_products.product_id = int(product)
-			transactions_products.product_qty = int(products_qty[i])
-			db.session.add(transactions_products)
-			db.session.flush()
-
-		# commit semua transaksi
-		db.session.commit()
-		return redirect("/transactions")
-	return render_template("transactions/form_add.html")
+@bp.route("/cancel", methods=["GET"])
+@login_required
+def cancel():
+    transaction_id = request.args["id"]
+    transaction = Transaction.query.get(transaction_id)
+    if (datetime.now() - transaction.created_on).total_seconds()/60 < 15:
+        transaction.status = "Canceled"
+        db.session.add(transaction)
+        db.session.commit()
+    return redirect(url_for("transactions.list"))

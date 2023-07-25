@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>Servicio</th>
+            <th>Horas</th>
+            <th>Minutos</th>
+            <th>Precio</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                {{ service }}
+            </td>
+            <td>
+                {{ seconds//3600 }}
+            </td>
+            <td>
+                {{ (seconds//60)%60 }}
+            </td>
+            <td>
+                {{ price | round(2, 'floor') }}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <form action="{{ url_for('transactions.add') }}" method="post">
+        <input type="hidden" class="form-control" name="service" type="text" value="{{ service }}">
+        <input type="hidden" class="form-control" name="duration" type="text" value="{{ seconds/3600 }}">
+        <div class="form-group">
+            <label for="amount">Pago</label>
+            <input id="amount" class="form-control" name="amount" type="text" value="{{ price | int }}">
+        </div>
+        <button type="submit" class="btn btn-success">Registrar</button>
+    </form>
+</div>
+{% endblock %}

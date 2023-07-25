@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block menu %}
+    <li><a href="{{ url_for('services.add') }}">Add service</a></li>
+{% endblock %}
+
+{% block content %}
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th hidden>Id</th>
+            <th>Service Name</th>
+            <th>Hourly Price</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for service in services %}
+            <tr>
+                <td hidden>
+                    {{ service.id }}
+                </td>
+                <td>
+                    {{ service.name }}
+                </td>
+                <td>
+                    {{ service.hourly_price }}
+                </td>
+                <td>
+                    <a href="{{ url_for('services.edit') }}?id={{ service.id }}">Edit</a>
+                    <a href="{{ url_for('services.delete') }}?id={{ service.id }}">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

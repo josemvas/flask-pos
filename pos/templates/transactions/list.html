@@ -1,29 +1,46 @@
 {% extends 'base.html' %}
 
+{% block menu %}
+    <li><a href="{{ url_for('transactions.add') }}">Add transaction</a></li>
+{% endblock %}
+
 {% block content %}
     <table class="table table-bordered table-striped">
         <thead>
         <tr>
-            <th>id</th>
-            <th>products</th>
-            <th>create on</th>
+            <th colspan="2">Created on/by</th>
+            <th>Service</th>
+            <th>Amount</th>
+            <th hidden>Price</th>
+            <th>Status</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
         {% for transaction in transactions %}
         <tr>
             <td>
-                {{ transaction.id }}
+                {{ transaction.created_on.strftime('%Y-%m-%d') }}
             </td>
             <td>
-                <ul>
-                {% for transaction_product in transaction.transaction_products %}
-                    <li>{{ transaction_product.product.name }} = {{ transaction_product.product_qty }}</li>
-                {% endfor %}
-                </ul>
+                {{ transaction.created_by.name }}
             </td>
             <td>
-                {{ transaction.create_on }}
+                {{ transaction.service.name }}
+            </td>
+            <td>
+                {{ transaction.amount }}
+            </td>
+            <td hidden>
+                {{ transaction.service_duration*transaction.service.hourly_price | round(2, 'floor') }}
+            </td>
+            <td>
+                {{ transaction.status }}
+            </td>
+            <td>
+                {% if transaction.status == 'Paid' and (now - transaction.created_on).total_seconds()/60 < 15 %}
+                <a href="{{ url_for('transactions.cancel') }}?id={{ transaction.id }}">Cancel</a>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}

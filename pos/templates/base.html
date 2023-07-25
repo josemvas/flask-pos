@@ -2,16 +2,32 @@
 <head>
     <title>Point of Sale</title>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap.min.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    /* tablets and upwards */
+    @media (min-width: 768px) {
+        .container {
+            width: 768px;
+        }
+    }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-default">
+    {% if current_user.is_authenticated %}
+    <div>You are logged in as {{ current_user.real_name }}</div>
+    {% endif %}
     <div class="container-fluid">
+        {% if current_user.is_authenticated %}
         <ul class="nav navbar-nav">
-            <li><a href="/products">list product</a></li>
-            <li><a href="/products/add">add product</a></li>
-            <li><a href="/transactions">list transaction</a></li>
-            <li><a href="/transactions/add">add transaction</a></li>
+            <li><a href="{{ url_for('root.logout') }}">Logout</a></li>
+            {% block menu %}{% endblock %}
         </ul>
+        {% else %}
+        <ul class="nav navbar-nav">
+            <li><a href="{{ url_for('root.login') }}">Login</a></li>
+        </ul>
+        {% endif %}
     </div>
 </nav>
 <div class="container">

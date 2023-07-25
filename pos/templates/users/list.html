@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block menu %}
+    <li><a href="{{ url_for('users.add') }}">Add user</a></li>
+{% endblock %}
+
+{% block content %}
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th hidden>Id</th>
+            <th>Username</th>
+            <th>Real name</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+            <tr>
+                <td hidden>
+                    {{ user.id }}
+                </td>
+                <td>
+                    {{ user.name }}
+                </td>
+                <td>
+                    {{ user.real_name }}
+                </td>
+                <td>
+                    <a href="{{ url_for('users.edit') }}?id={{ user.id }}">Edit</a>
+                    <a href="{{ url_for('users.delete') }}?id={{ user.id }}">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
