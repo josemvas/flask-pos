@@ -10,7 +10,7 @@
         <tr>
             <th colspan="2">Created on/by</th>
             <th>Service</th>
-            <th>Amount</th>
+            <th>Payment</th>
             <th hidden>Price</th>
             <th>Status</th>
             <th>Actions</th>
@@ -29,7 +29,7 @@
                 {{ transaction.service.name }}
             </td>
             <td>
-                {{ transaction.amount }}
+                {{ transaction.payment }}
             </td>
             <td hidden>
                 {{ transaction.service_duration*transaction.service.hourly_price | round(2, 'floor') }}

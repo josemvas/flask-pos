@@ -8,34 +8,50 @@
             <th>Servicio</th>
             <th>Horas</th>
             <th>Minutos</th>
-            <th>Precio</th>
         </tr>
         </thead>
         <tbody>
         <tr>
             <td>
-                {{ service }}
+                {{ selected_service }}
             </td>
             <td>
-                {{ seconds//3600 }}
+                {{ minutes//60 }}
             </td>
             <td>
-                {{ (seconds//60)%60 }}
-            </td>
-            <td>
-                {{ price | round(2, 'floor') }}
+                {{ minutes%60 }}
             </td>
         </tr>
         </tbody>
     </table>
     <form action="{{ url_for('transactions.add') }}" method="post">
-        <input type="hidden" class="form-control" name="service" type="text" value="{{ service }}">
-        <input type="hidden" class="form-control" name="duration" type="text" value="{{ seconds/3600 }}">
         <div class="form-group">
-            <label for="amount">Pago</label>
-            <input id="amount" class="form-control" name="amount" type="text" value="{{ price | int }}">
+            <label for="service">Servicio</label>
+            <select name="service" id="service" class="form-control" selected="{{ selected_service }}" onchange="calculate_payment()">
+            {% for service_name in hourly_prices %}
+                <option value="{{ service_name }}">{{ service_name }}</option>
+            {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="duration">Duración (minutos)</label>
+            <input id="duration" class="form-control" name="duration" type="number" min="30" step="15" value="{{ [minutes, 30]|max }}" onchange="calculate_payment()">
+        </div>
+        <div class="form-group">
+            <label for="payment">Total (pesos)</label>
+            <input id="payment" class="form-control" name="payment" type="number" readonly>
         </div>
         <button type="submit" class="btn btn-success">Registrar</button>
     </form>
 </div>
+<script type="text/javascript">
+    const service = document.getElementById('service');
+    const duration = document.getElementById('duration');
+    const payment = document.getElementById('payment');
+    const hourly_prices = JSON.parse('{{ hourly_prices|tojson }}');
+    function calculate_payment() {
+        payment.value = Math.trunc((Math.max(duration.value, 30)/60)*hourly_prices[service.value]);
+    }
+    calculate_payment();
+</script>
 {% endblock %}

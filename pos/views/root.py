@@ -35,16 +35,14 @@ def logout():
 @bp.route("/pay", methods=["GET"])
 @login_required
 def pay():
-    service_name = request.args["service"]
+    services = Service.query.all()
+    hourly_prices = {service.name:service.hourly_price for service in services}
+    selected_service = request.args["service"]
     start_time = request.args["start"]
     datetime_format = "%Y-%m-%d %H:%M"
-    service = Service.query.filter_by(name=service_name).one_or_none()
-    if service is None:
-        abort(400)
     datetime_start = datetime.strptime(start_time, datetime_format)
     datetime_end = datetime.now().replace(second=0, microsecond=0)
     timedelta = datetime_end - datetime_start
     end_time = datetime_end.strftime(datetime_format)
-    seconds = timedelta.total_seconds()
-    price = max(seconds/3600, 0.5)*service.hourly_price
-    return render_template("form_pay.html", service=service.name, seconds=seconds, price=price)
+    minutes = int(timedelta.total_seconds()//60)
+    return render_template("form_pay.html", minutes=minutes, selected_service=selected_service, hourly_prices=hourly_prices)

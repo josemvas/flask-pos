@@ -15,17 +15,18 @@ def list():
 @login_required
 def add():
     if request.method == "GET":
-        return render_template("transactions/form_add.html")
+        services = Service.query.all()
+        return render_template("transactions/form_add.html", services=services)
     # ambil data dari form html
     service_name = request.form["service"]
     duration = request.form["duration"]
-    amount = request.form["amount"]
+    payment = request.form["payment"]
     # buat transacsi utamanya
     transaction = Transaction()
     service = Service.query.filter_by(name=service_name).one()
     transaction.service_id = service.id
     transaction.service_duration = duration
-    transaction.amount = amount
+    transaction.payment = payment
     db.session.add(transaction)
     db.session.flush()
     # commit semua transaksi
