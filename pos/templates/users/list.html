@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block menu %}
-    <li><a href="{{ url_for('users.add') }}">Add user</a></li>
+    <li><a href="{{ url_for('users.add') }}">Registrar usuario</a></li>
 {% endblock %}
 
 {% block content %}
@@ -9,9 +9,9 @@
         <thead>
         <tr>
             <th hidden>Id</th>
-            <th>Username</th>
-            <th>Real name</th>
-            <th>Actions</th>
+            <th>Usuario</th>
+            <th>Nombre</th>
+            <th>Acciones</th>
         </tr>
         </thead>
         <tbody>
@@ -27,8 +27,8 @@
                     {{ user.real_name }}
                 </td>
                 <td>
-                    <a href="{{ url_for('users.edit') }}?id={{ user.id }}">Edit</a>
-                    <a href="{{ url_for('users.delete') }}?id={{ user.id }}">Delete</a>
+                    <a href="{{ url_for('users.edit') }}?id={{ user.id }}">Editar</a>
+                    <a href="{{ url_for('users.delete') }}?id={{ user.id }}">Eliminar</a>
                 </td>
             </tr>
         {% endfor %}

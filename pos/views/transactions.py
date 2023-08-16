@@ -19,6 +19,7 @@ def add():
         return render_template("transactions/form_add.html", services=services)
     # ambil data dari form html
     service_name = request.form["service"]
+    quantity = request.form["quantity"]
     duration = request.form["duration"]
     payment = request.form["payment"]
     # buat transacsi utamanya
@@ -26,6 +27,7 @@ def add():
     service = Service.query.filter_by(name=service_name).one()
     transaction.service_id = service.id
     transaction.service_duration = duration
+    transaction.service_quantity = quantity
     transaction.payment = payment
     db.session.add(transaction)
     db.session.flush()

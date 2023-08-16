@@ -1,19 +1,20 @@
 {% extends 'base.html' %}
 
 {% block menu %}
-    <li><a href="{{ url_for('transactions.add') }}">Add transaction</a></li>
+    <li><a href="{{ url_for('transactions.add') }}">Registrar transacción</a></li>
 {% endblock %}
 
 {% block content %}
     <table class="table table-bordered table-striped">
         <thead>
         <tr>
-            <th colspan="2">Created on/by</th>
-            <th>Service</th>
-            <th>Payment</th>
-            <th hidden>Price</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th colspan="2">Creada en/por</th>
+            <th>Servicio</th>
+            <th>Cant.</th>
+            <th>Dura.</th>
+            <th>Pago</th>
+            <th>Estado</th>
+            <th>Acciones</th>
         </tr>
         </thead>
         <tbody>
@@ -29,17 +30,20 @@
                 {{ transaction.service.name }}
             </td>
             <td>
-                {{ transaction.payment }}
+                {{ transaction.service_quantity }}
             </td>
-            <td hidden>
-                {{ transaction.service_duration*transaction.service.hourly_price | round(2, 'floor') }}
+            <td>
+                {{ transaction.service_duration }}
+            </td>
+            <td>
+                {{ transaction.payment }}
             </td>
             <td>
                 {{ transaction.status }}
             </td>
             <td>
                 {% if transaction.status == 'Paid' and (now - transaction.created_on).total_seconds()/60 < 15 %}
-                <a href="{{ url_for('transactions.cancel') }}?id={{ transaction.id }}">Cancel</a>
+                <a href="{{ url_for('transactions.cancel') }}?id={{ transaction.id }}">Cancelar</a>
                 {% endif %}
             </td>
         </tr>

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, abort
+from flask import Blueprint, render_template, session, request, redirect, url_for, abort
 from flask_login import login_required, login_user, logout_user
 from datetime import datetime, timedelta
 from pos.models import db, User, Service, Transaction
@@ -17,6 +17,7 @@ def login():
     user = User.query.filter_by(name=username).one_or_none()
     if user:
         if user.verify_password(password):
+            session.permanent = True
             login_user(user)
             if next_page:
                 return redirect(next_page)

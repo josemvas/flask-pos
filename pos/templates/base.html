@@ -1,34 +1,35 @@
 <!doctype html>
 <head>
-    <title>Point of Sale</title>
+    <title>Punto de venta</title>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap.min.css') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
     .apart {
-        margin-top: 25px;
+        margin-top: 20px;
     }
     /* tablets and upwards */
     @media (min-width: 576px) {
         .container {
             width: 576px;
         }
+        .container-fluid {
+            float: right;
+        }
     }
     </style>
 </head>
 <body>
 <nav class="navbar navbar-default">
-    {% if current_user.is_authenticated %}
-    <div>You are logged in as {{ current_user.real_name }}</div>
-    {% endif %}
     <div class="container-fluid">
         {% if current_user.is_authenticated %}
+        <div class="navbar-text">Accediste como {{ current_user.real_name }}</div>
         <ul class="nav navbar-nav">
-            <li><a href="{{ url_for('root.logout') }}">Logout</a></li>
+            <li><a href="{{ url_for('root.logout') }}">Salir</a></li>
             {% block menu %}{% endblock %}
         </ul>
         {% else %}
         <ul class="nav navbar-nav">
-            <li><a href="{{ url_for('root.login') }}">Login</a></li>
+            <li><a href="{{ url_for('root.login') }}">Iniciar sesión</a></li>
         </ul>
         {% endif %}
     </div>

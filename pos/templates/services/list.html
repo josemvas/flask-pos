@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block menu %}
-    <li><a href="{{ url_for('services.add') }}">Add service</a></li>
+    <li><a href="{{ url_for('services.add') }}">Registrar servicio</a></li>
 {% endblock %}
 
 {% block content %}
@@ -9,9 +9,9 @@
         <thead>
         <tr>
             <th hidden>Id</th>
-            <th>Service Name</th>
-            <th>Hourly Price</th>
-            <th>Actions</th>
+            <th>Servicio</th>
+            <th>Precio</th>
+            <th>Acciones</th>
         </tr>
         </thead>
         <tbody>
@@ -27,8 +27,8 @@
                     {{ service.hourly_price }}
                 </td>
                 <td>
-                    <a href="{{ url_for('services.edit') }}?id={{ service.id }}">Edit</a>
-                    <a href="{{ url_for('services.delete') }}?id={{ service.id }}">Delete</a>
+                    <a href="{{ url_for('services.edit') }}?id={{ service.id }}">Editar</a>
+                    <a href="{{ url_for('services.delete') }}?id={{ service.id }}">Eliminar</a>
                 </td>
             </tr>
         {% endfor %}

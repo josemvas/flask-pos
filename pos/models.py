@@ -33,6 +33,7 @@ class Transaction(db.Model):
     service = relationship("Service", backref="transactions")
     service_id = db.Column(db.Integer, db.ForeignKey("services.id"), nullable=False)
     service_duration = db.Column(db.Integer, nullable=False)
+    service_quantity = db.Column(db.Integer, nullable=False)
     payment = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(16), nullable=False)
     def __init__(self):
