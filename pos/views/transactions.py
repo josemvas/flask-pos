@@ -9,7 +9,8 @@ bp = Blueprint("transactions", __name__, url_prefix='/transactions')
 @login_required
 def list():
     transactions = Transaction.query.all()
-    return render_template("transactions/list.html", transactions=transactions, now=datetime.now())
+    payment = sum([i.payment for i in transactions if i.status == 'Paid'])
+    return render_template("transactions/list.html", transactions=transactions, payment=payment, now=datetime.now)
 
 @bp.route("/add", methods=["GET","POST"])
 @login_required
@@ -42,6 +43,21 @@ def cancel():
     transaction = Transaction.query.get(transaction_id)
     if (datetime.now() - transaction.created_on).total_seconds()/60 < 15:
         transaction.status = "Canceled"
+        db.session.add(transaction)
+        db.session.commit()
+    return redirect(url_for("transactions.list"))
+
+@bp.route("/archive", methods=["GET"])
+@login_required
+def archive():
+    transaction_id = request.args["id"]
+    transaction = Transaction.query.get(transaction_id)
+    if transaction.status == "Paid":
+        transaction.status = "_Paid"
+        db.session.add(transaction)
+        db.session.commit()
+    if transaction.status == "Canceled":
+        transaction.status = "_Canceled"
         db.session.add(transaction)
         db.session.commit()
     return redirect(url_for("transactions.list"))

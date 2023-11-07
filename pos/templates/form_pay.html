@@ -64,7 +64,35 @@
     const payment = document.getElementById('payment');
     const hourly_prices = JSON.parse('{{ hourly_prices|tojson }}');
     function update_payment() {
-        payment.value = Math.trunc(duration.value/60*hourly_prices[service.value]*quantity.value);
+        if (service.value == "Quest") {
+          rate1 = 80;
+          rate2 = 60;
+          rate3 = 45;
+	} else if (service.value == "PCVR") {
+          rate1 = 120;
+          rate2 = 90;
+          rate3 = 67.5;
+        }
+        if (quantity.value == 1) {
+          mult = 1
+        } else if (quantity.value == 2) {
+          mult = 1.5
+        } else if (quantity.value == 3) {
+          mult = 2
+	}
+        if (duration.value >= 120) {
+          payment.value = mult * rate3 * duration.value/60;
+        } else if (duration.value >= 90) {
+          payment.value = mult * rate3 * 2;
+        } else if (duration.value >= 60) {
+          payment.value = mult * rate2 * duration.value/60;
+        } else if (duration.value >= 45) {
+          payment.value = mult * rate2 * 1;
+        } else if (duration.value >= 30) {
+          payment.value = mult * rate1 * duration.value/60;
+        } else {
+          payment.value = mult * rate1 * 0.5;
+        }
     }
     update_payment();
 </script>

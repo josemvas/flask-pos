@@ -8,24 +8,20 @@
     <table class="table table-bordered table-striped">
         <thead>
         <tr>
-            <th colspan="2">Creada en/por</th>
             <th>Servicio</th>
             <th>Cant.</th>
             <th>Dura.</th>
             <th>Pago</th>
             <th>Estado</th>
+            <th>Fecha</th>
+            <th hidden>Usuario</th>
             <th>Acciones</th>
         </tr>
         </thead>
         <tbody>
         {% for transaction in transactions %}
+        {% if not transaction.status.startswith('_') %}
         <tr>
-            <td>
-                {{ transaction.created_on.strftime('%Y-%m-%d') }}
-            </td>
-            <td>
-                {{ transaction.created_by.name }}
-            </td>
             <td>
                 {{ transaction.service.name }}
             </td>
@@ -42,12 +38,44 @@
                 {{ transaction.status }}
             </td>
             <td>
-                {% if transaction.status == 'Paid' and (now - transaction.created_on).total_seconds()/60 < 15 %}
+                {{ transaction.created_on.strftime('%d/%m') }}
+            </td>
+            <td hidden>
+                {{ transaction.created_by.name }}
+            </td>
+            <td>
+                {% if transaction.status == 'Paid' %}
+		{% if (now() - transaction.created_on).total_seconds()/60 < 15 %}
                 <a href="{{ url_for('transactions.cancel') }}?id={{ transaction.id }}">Cancelar</a>
+                {% endif %}
+                {% endif %}
+		{% if current_user.name == 'admin' %}
+                <a href="{{ url_for('transactions.archive') }}?id={{ transaction.id }}">Archivar</a>
                 {% endif %}
             </td>
         </tr>
+        {% endif %}
         {% endfor %}
+        <tr>
+            <td>
+                Total
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+                {{ payment }}
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td hidden>
+            </td>
+            <td>
+            </td>
+        </tr>
         </tbody>
     </table>
 {% endblock %}
